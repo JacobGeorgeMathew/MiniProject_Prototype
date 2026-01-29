@@ -13,9 +13,15 @@ func qimEmbed(c float64, bit int, delta float64) float64 {
 	return base + 3*delta/4
 }
 
+// FIXED qimExtract - handles negative coefficients correctly
 func qimExtract(c float64, delta float64) int {
-	r := math.Mod(c, delta)
-	if r < delta/2 {
+	// Fix for negative coefficients
+	// Instead of math.Mod, compute remainder properly
+	base := math.Floor(c/delta) * delta
+	remainder := c - base
+
+	// Now remainder is always in [0, delta)
+	if remainder < delta/2 {
 		return 0
 	}
 	return 1
@@ -73,7 +79,7 @@ func dct2D(block [][]float64) [][]float64 {
 
 // PerformEmbedd modifies the block in-place by embedding watermark bits
 func PerformEmbedd(block [][]float64, bits []int) {
-	// Reduced alpha for less aggressive watermarking
+	// Use alpha = 10.0 for stronger watermark
 	alpha := 10.0
 
 	// Perform DCT
@@ -91,6 +97,7 @@ func PerformEmbedd(block [][]float64, bits []int) {
 }
 
 func PerformExtract(block [][]float64) []int {
+	// Must match the alpha used in PerformEmbedd
 	alpha := 10.0
 
 	dctBlock := dct2D(block)

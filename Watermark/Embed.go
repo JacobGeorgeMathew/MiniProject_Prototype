@@ -45,7 +45,7 @@ func embed_in_a_tile(tile [][]float64, stream []int) [][]float64 {
 
 func Embed_Watermark(img image.Image, message string) *image.YCbCr {
 
-	stream := buildWatermarkBits(message)
+	stream := BuildWatermarkBits(message)
 
 	ycb, Ymatrix := ConvertToYC(img)
 
@@ -68,6 +68,49 @@ func Embed_Watermark(img image.Image, message string) *image.YCbCr {
 	}
 
 	Ymatrix = PerformCompleteIDWTFromResult(img_DWT)
+	//------------
+	// Perform DWT
+	// img_DWT2 := PerformCompleteDWT(Ymatrix)
+
+	// fmt.Println("DWT completed for extraction")
+
+	// h = len(img_DWT2.HL)
+	// w = len(img_DWT2.HL[0])
+
+	// var messages []string
+	// tileCount := 0
+
+	// // Process each 128x128 tile
+	// numTilesY := h / 128
+	// numTilesX := w / 128
+
+	// fmt.Printf("Processing %d x %d = %d tiles\n", numTilesY, numTilesX, numTilesY*numTilesX)
+
+	// for i := 0; i < numTilesY; i++ {
+	// 	for j := 0; j < numTilesX; j++ {
+	// 		tileCount++
+
+	// 		// Get the tile
+	// 		tile := getBlock(img_DWT.HL, j*128, i*128, 128)
+
+	// 		// Extract bits from this tile
+	// 		extractedBits := extractFromTile(tile)
+
+	// 		// Try to find the message
+	// 		message, found := findMessage(extractedBits)
+
+	// 		if found {
+	// 			fmt.Printf("Tile [%d,%d] (tile #%d): Message found: \"%s\"\n", i, j, tileCount, message)
+	// 			messages = append(messages, message)
+	// 		} else {
+	// 			fmt.Printf("Tile [%d,%d] (tile #%d): No valid message found\n", i, j, tileCount)
+	// 		}
+	// 	}
+	// }
+	// for k, msg := range messages {
+	// 	fmt.Println("message ", k, " : ", msg)
+	// }
+	//---------
 	Modify_YComponent(ycb, Ymatrix)
 	return ycb
 }

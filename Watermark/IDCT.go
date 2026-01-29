@@ -53,7 +53,3 @@ func idct2D(block [][]float64) [][]float64 {
 
 	return result
 }
-
-func PerformIDCT(block [][]float64) {
-
-}

@@ -24,7 +24,8 @@ func bitsToBytes(bits []int) []byte {
 	return result
 }
 
-func buildWatermarkBits(message string) []int {
+// BuildWatermarkBits converts a message string to a watermark bit stream with flags
+func BuildWatermarkBits(message string) []int {
 	startFlag := []int{
 		1, 1, 1, 1, 0, 0, 0, 0,
 		1, 1, 1, 1, 0, 0, 0, 0,
