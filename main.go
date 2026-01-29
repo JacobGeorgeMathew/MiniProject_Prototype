@@ -4,7 +4,7 @@ import (
 	"InvisibleWaterMarkingSystem/Watermark"
 	"fmt"
 	"image"
-	"math"
+	"image/jpeg"
 	"os"
 )
 
@@ -21,19 +21,23 @@ func main() {
 		panic(err)
 	}
 
-	img_DWT := Watermark.PerformWaveletTransform(img)
-	fmt.Println("Converted to DWT : ")
-	temp := make([][]float64, 8)
-	for i := 0; i < 8; i++ {
-		temp[i] = make([]float64, 8)
+	ycb := Watermark.Embed_Watermark(img, "Hello World")
+	fmt.Println("Watermark embedded successfully")
+
+	outFile, err := os.Create("Watermarked_Image.jpg")
+	if err != nil {
+		panic(err)
+	}
+	defer outFile.Close()
+
+	options := &jpeg.Options{
+		Quality: 100, // 1–100
 	}
 
-	h := len(img_DWT)
-	w := len(img_DWT[0])
-	for i := 0; i < int(math.Floor(float64(h)/128)); i += 128 {
-		for j := 0; j < int(math.Floor(float64(w)/128)); j += 128 {
+	err = jpeg.Encode(outFile, ycb, options)
 
-		}
+	if err != nil {
+		panic(err)
 	}
 	//Watermark.PerformEmbedd(img)
 }

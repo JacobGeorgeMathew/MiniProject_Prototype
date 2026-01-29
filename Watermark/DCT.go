@@ -71,26 +71,34 @@ func dct2D(block [][]float64) [][]float64 {
 	return result
 }
 
+// PerformEmbedd modifies the block in-place by embedding watermark bits
 func PerformEmbedd(block [][]float64, bits []int) {
+	// Reduced alpha for less aggressive watermarking
 	alpha := 10.0
 
-	block = dct2D(block)
+	// Perform DCT
+	dctBlock := dct2D(block)
 
-	block[1][3] = qimEmbed(block[1][3], bits[0], float64(alpha))
+	// Embed watermark in mid-frequency coefficients
+	dctBlock[1][3] = qimEmbed(dctBlock[1][3], bits[0], alpha)
+	dctBlock[3][1] = qimEmbed(dctBlock[3][1], bits[1], alpha)
 
-	block[3][1] = qimEmbed(block[3][1], bits[1], float64(alpha))
+	// Perform IDCT and copy back to original block
+	idctBlock := idct2D(dctBlock)
+	for i := 0; i < len(block); i++ {
+		copy(block[i], idctBlock[i])
+	}
 }
 
 func PerformExtract(block [][]float64) []int {
 	alpha := 10.0
 
-	block = dct2D(block)
+	dctBlock := dct2D(block)
 
 	bits := make([]int, 2)
 
-	bits[0] = qimExtract(block[1][3], alpha)
-
-	bits[1] = qimExtract(block[3][1], alpha)
+	bits[0] = qimExtract(dctBlock[1][3], alpha)
+	bits[1] = qimExtract(dctBlock[3][1], alpha)
 
 	return bits
 }
